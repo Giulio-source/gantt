@@ -1,0 +1,17 @@
+.gridRow {
+  fill: #fff;
+}
+
+.gridRowLine {
+  stroke: #ebeff2;
+}
+
+.gridTick {
+  stroke: #e6e4e4;
+  stroke-width: 2px;
+}
+
+.gridThinTick {
+  stroke: #e6e4e4;
+  stroke-width: 1px;
+}
