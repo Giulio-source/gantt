@@ -2,6 +2,7 @@ import React from "react";
 import style from "./bar.module.css";
 
 type BarDisplayProps = {
+  id: string;
   x: number;
   y: number;
   width: number;
@@ -18,8 +19,10 @@ type BarDisplayProps = {
     progressSelectedColor: string;
   };
   onMouseDown: (event: React.MouseEvent<SVGPolygonElement, MouseEvent>) => void;
+  crossList?: { x1: number; x2: number; start: Date; end: Date; color: string; label?: string }[];
 };
 export const BarDisplay: React.FC<BarDisplayProps> = ({
+  id,
   x,
   y,
   width,
@@ -30,6 +33,7 @@ export const BarDisplay: React.FC<BarDisplayProps> = ({
   barCornerRadius,
   styles,
   onMouseDown,
+  crossList,
 }) => {
   const getProcessColor = () => {
     return isSelected ? styles.progressSelectedColor : styles.progressColor;
@@ -42,6 +46,7 @@ export const BarDisplay: React.FC<BarDisplayProps> = ({
   return (
     <g onMouseDown={onMouseDown}>
       <rect
+        key={`${id}_bar`}
         x={x}
         width={width}
         y={y}
@@ -52,6 +57,7 @@ export const BarDisplay: React.FC<BarDisplayProps> = ({
         className={style.barBackground}
       />
       <rect
+        key={`${id}_bar_progress`}
         x={progressX}
         width={progressWidth}
         y={y}
@@ -60,6 +66,18 @@ export const BarDisplay: React.FC<BarDisplayProps> = ({
         rx={barCornerRadius}
         fill={getProcessColor()}
       />
+      {crossList?.map(cross => (
+        <rect
+          key={`${id}_cross_${cross.x1}_${cross.x2}`}
+          x={cross.x1}
+          width={cross.x2 - cross.x1}
+          y={y}
+          height={height}
+          ry={barCornerRadius}
+          rx={barCornerRadius}
+          fill={cross.color}
+        />
+      ))}
     </g>
   );
 };

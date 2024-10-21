@@ -32,6 +32,14 @@ export interface Task {
   displayOrder?: number;
   overrideRowNumber?: number;
   userId?: string | number;
+  crossList: {
+    x1: number;
+    x2: number;
+    start: Date;
+    end: Date;
+    color: string;
+    label?: string;
+  }[];
 }
 
 export interface EventOption {

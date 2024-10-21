@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useMemo, useRef } from "react";
 import { Calendar, CalendarProps } from "../calendar/calendar";
 import { Grid, GridProps } from "../grid/grid";
 import styles from "./gantt.module.css";
@@ -24,11 +24,15 @@ export const TaskGantt: React.FC<TaskGanttProps> = ({
   const horizontalContainerRef = useRef<HTMLDivElement>(null);
   const verticalGanttContainerRef = useRef<HTMLDivElement>(null);
   const newBarProps = { ...barProps, svg: ganttSVGRef };
-  const rowsCount = barProps.tasks.every(
-    task => typeof task.overrideRowNumber === "number"
-  )
-    ? Math.max(...barProps.tasks.map(task => task.overrideRowNumber!)) + 1
-    : barProps.tasks.length;
+  const rowsCount = useMemo(() => {
+    const count = barProps.tasks.every(
+      task => typeof task.overrideRowNumber === "number"
+    )
+      ? Math.max(...barProps.tasks.map(task => task.overrideRowNumber!)) + 1
+      : barProps.tasks.length;
+
+    return count > 0 ? count : 1;
+  }, [barProps]);
 
   useEffect(() => {
     if (horizontalContainerRef.current) {

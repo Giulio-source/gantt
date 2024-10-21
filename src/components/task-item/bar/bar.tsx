@@ -23,6 +23,7 @@ export const Bar: React.FC<TaskItemProps> = ({
   return (
     <g className={styles.barWrapper} tabIndex={0}>
       <BarDisplay
+        id={task.id}
         x={task.x1}
         y={task.y}
         width={task.x2 - task.x1}
@@ -35,6 +36,7 @@ export const Bar: React.FC<TaskItemProps> = ({
         onMouseDown={e => {
           isDateChangeable && onEventStart("move", task, e);
         }}
+        crossList={task.crossList}
       />
       <g className="handleGroup">
         {isDateChangeable && (

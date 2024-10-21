@@ -35,6 +35,8 @@ export const TaskItem: React.FC<TaskItemProps> = props => {
   } = {
     ...props,
   };
+  const crossList = task.crossList;
+
   const textRef = useRef<SVGTextElement>(null);
   const [taskItem, setTaskItem] = useState<JSX.Element>(<div />);
   const [isTextInside, setIsTextInside] = useState(true);
@@ -54,12 +56,18 @@ export const TaskItem: React.FC<TaskItemProps> = props => {
         setTaskItem(<Bar {...props} />);
         break;
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [task, isSelected]);
 
   useEffect(() => {
     if (textRef.current) {
-      setIsTextInside(textRef.current.getBBox().width < task.x2 - task.x1);
+      setIsTextInside(
+        crossList && crossList.length > 0
+          ? false
+          : textRef.current.getBBox().width < task.x2 - task.x1
+      );
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [textRef, task]);
 
   const getX = () => {
@@ -109,6 +117,7 @@ export const TaskItem: React.FC<TaskItemProps> = props => {
     >
       {taskItem}
       <text
+        key={`${task.id}_label`}
         x={getX()}
         y={task.y + taskHeight * 0.5}
         className={
@@ -120,6 +129,16 @@ export const TaskItem: React.FC<TaskItemProps> = props => {
       >
         {task.name}
       </text>
+      {crossList.map(cross => (
+        <text
+          key={`${task.id}_cross_${cross.x1}_${cross.x2}`}
+          x={cross.x1 + (cross.x2 - cross.x1) * 0.5}
+          y={task.y + taskHeight * 0.5}
+          className={style.barLabel}
+        >
+          {cross.label}
+        </text>
+      ))}
     </g>
   );
 };

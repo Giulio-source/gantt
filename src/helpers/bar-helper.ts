@@ -160,6 +160,20 @@ const convertToBar = (
     x1 = taskXCoordinate(task.start, dates, columnWidth);
     x2 = taskXCoordinate(task.end, dates, columnWidth);
   }
+
+  const crossList: any[] =
+    [];
+  if (task.crossList) {
+    task.crossList.forEach(cross => {
+      crossList.push({
+        x1: taskXCoordinate(cross.start, dates, columnWidth),
+        x2: taskXCoordinate(cross.end, dates, columnWidth),
+        color: cross.color,
+        label: cross.label,
+      });
+    });
+  }
+
   let typeInternal: TaskTypeInternal = task.type;
   if (typeInternal === "task" && x2 - x1 < handleWidth * 2) {
     typeInternal = "smalltask";
@@ -201,6 +215,7 @@ const convertToBar = (
     height: taskHeight,
     barChildren: [],
     styles,
+    crossList,
   };
 };
 
