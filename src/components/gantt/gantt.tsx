@@ -5,6 +5,7 @@ import React, {
   useRef,
   useState,
 } from "react";
+import { TooltipProvider } from "../../context/TooltipContext";
 import { convertToBarTasks } from "../../helpers/bar-helper";
 import { ganttDateRange, seedDates } from "../../helpers/date-helper";
 import { removeHiddenTasks, sortTasks } from "../../helpers/other-helper";
@@ -54,6 +55,7 @@ export const Gantt: React.FunctionComponent<GanttProps> = ({
   arrowIndent = 20,
   todayColor = "rgba(252, 248, 227, 0.5)",
   viewDate,
+  tooltipData,
   TaskListHeader = TaskListHeaderDefault,
   TaskListTable = TaskListTableDefault,
   onDateChange,
@@ -63,6 +65,7 @@ export const Gantt: React.FunctionComponent<GanttProps> = ({
   onDelete,
   onSelect,
   onExpanderClick,
+  onColumnHighlight,
 }) => {
   const wrapperRef = useRef<HTMLDivElement>(null);
   const taskListRef = useRef<HTMLDivElement>(null);
@@ -377,6 +380,7 @@ export const Gantt: React.FunctionComponent<GanttProps> = ({
     dates: dateSetup.dates,
     todayColor,
     rtl,
+    onColumnHighlight,
   };
   const calendarProps: CalendarProps = {
     dateSetup,
@@ -441,14 +445,17 @@ export const Gantt: React.FunctionComponent<GanttProps> = ({
         ref={wrapperRef}
       >
         {listCellWidth && <TaskList {...tableProps} />}
-        <TaskGantt
-          gridProps={gridProps}
-          calendarProps={calendarProps}
-          barProps={barProps}
-          ganttHeight={ganttHeight}
-          scrollY={scrollY}
-          scrollX={scrollX}
-        />
+        <TooltipProvider>
+          <TaskGantt
+            gridProps={gridProps}
+            calendarProps={calendarProps}
+            barProps={barProps}
+            ganttHeight={ganttHeight}
+            scrollY={scrollY}
+            scrollX={scrollX}
+            tooltipData={tooltipData}
+          />
+        </TooltipProvider>
         <VerticalScroll
           ganttFullHeight={ganttFullHeight}
           ganttHeight={ganttHeight}

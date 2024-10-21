@@ -151,4 +151,13 @@ export interface StylingOption {
 
 export interface GanttProps extends EventOption, DisplayOption, StylingOption {
   tasks: Task[];
+  onColumnHighlight?: (time: number) => void;
+  tooltipData?: {
+    hour: number;
+    firstQuarter: number;
+    secondQuarter: number;
+    thirdQuarter: number;
+    fourthQuarter: number;
+    hourlyNeed: number;
+  };
 }

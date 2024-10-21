@@ -2,16 +2,53 @@
   fill: #fff;
 }
 
+.gridColumn {
+  fill: #fff;
+}
+
+.gridColumn:hover {
+  fill: #f8f7f7;
+}
+
 .gridRowLine {
   stroke: #ebeff2;
+  pointer-events: none;
 }
 
 .gridTick {
   stroke: #e6e4e4;
   stroke-width: 2px;
+  pointer-events: none;
 }
 
 .gridThinTick {
   stroke: #e6e4e4;
   stroke-width: 1px;
+  pointer-events: none;
+}
+
+.gridTooltip {
+  width: 120px;
+  padding: 10px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  transition: transform 0.3s ease;
+  background: white;
+  border: 1px solid #e6e4e4;
+  pointer-events: none;
+  font-size: 16px;
+  color: black;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+}
+
+.gridTooltip li {
+  color: #a3b2ff;
+}
+
+.gridTooltipHighlight {
+  color: #0024e0;
 }

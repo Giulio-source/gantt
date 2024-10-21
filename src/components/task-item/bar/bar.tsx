@@ -1,10 +1,11 @@
 import React from "react";
 import { getProgressPoint } from "../../../helpers/bar-helper";
-import { BarDisplay } from "./bar-display";
-import { BarDateHandle } from "./bar-date-handle";
-import { BarProgressHandle } from "./bar-progress-handle";
 import { TaskItemProps } from "../task-item";
+import { BarDateHandle } from "./bar-date-handle";
+import { BarDisplay } from "./bar-display";
+import { BarProgressHandle } from "./bar-progress-handle";
 import styles from "./bar.module.css";
+import { useTooltip } from "../../../context/TooltipContext";
 
 export const Bar: React.FC<TaskItemProps> = ({
   task,
@@ -14,6 +15,7 @@ export const Bar: React.FC<TaskItemProps> = ({
   onEventStart,
   isSelected,
 }) => {
+  const { setTooltipVisible } = useTooltip();
   const progressPoint = getProgressPoint(
     +!rtl * task.progressWidth + task.progressX,
     task.y,
@@ -21,7 +23,15 @@ export const Bar: React.FC<TaskItemProps> = ({
   );
   const handleHeight = task.height - 2;
   return (
-    <g className={styles.barWrapper} tabIndex={0}>
+    <g
+      className={
+        task.styles.backgroundColor === "#FFFFFF00"
+          ? styles.barInvisible
+          : styles.barWrapper
+      }
+      tabIndex={0}
+      onMouseEnter={() => setTooltipVisible(false)}
+    >
       <BarDisplay
         id={task.id}
         x={task.x1}

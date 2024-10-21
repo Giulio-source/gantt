@@ -1,4 +1,5 @@
-import React, { ReactNode } from "react";
+import React, { MouseEvent, ReactNode } from "react";
+import { useTooltip } from "../../context/TooltipContext";
 import { addToDate } from "../../helpers/date-helper";
 import { Task } from "../../types/public-types";
 import styles from "./grid.module.css";
@@ -11,6 +12,7 @@ export type GridBodyProps = {
   columnWidth: number;
   todayColor: string;
   rtl: boolean;
+  onColumnHighlight?: (time: number) => void;
 };
 export const GridBody: React.FC<GridBodyProps> = ({
   tasks,
@@ -20,9 +22,22 @@ export const GridBody: React.FC<GridBodyProps> = ({
   columnWidth,
   todayColor,
   rtl,
+  onColumnHighlight,
 }) => {
+  const { setTooltipPosition, setTooltipVisible } = useTooltip();
   let y = 0;
+
+  function onMouseEnterColumn(hour: number) {
+    setTooltipVisible(true);
+    hour && onColumnHighlight && onColumnHighlight(hour);
+  }
+
+  function onMouseMoveColumn(e: MouseEvent) {
+    setTooltipPosition(e.clientX, e.clientY);
+  }
+
   const gridRows: ReactNode[] = [];
+  const gridColumns: ReactNode[] = [];
   const rowLines: ReactNode[] = [
     <line
       key="RowLineFirst"
@@ -33,6 +48,7 @@ export const GridBody: React.FC<GridBodyProps> = ({
       className={styles.gridRowLine}
     />,
   ];
+
   for (const task of tasks) {
     gridRows.push(
       <rect
@@ -63,6 +79,24 @@ export const GridBody: React.FC<GridBodyProps> = ({
   let today: ReactNode = <rect />;
   for (let i = 0; i < dates.length; i++) {
     const date = dates[i];
+    const isFullHour = date.getMinutes() === 0;
+
+    if (isFullHour) {
+      gridColumns.push(
+        <rect
+          key={"column" + date.getTime()}
+          x={tickX}
+          y={0}
+          width={columnWidth}
+          height={tasks.length * rowHeight}
+          className={styles.gridColumn}
+          onMouseEnter={() => onMouseEnterColumn(date.getHours())}
+          onMouseMove={onMouseMoveColumn}
+          onMouseLeave={() => setTooltipVisible(false)}
+        />
+      );
+    }
+
     ticks.push(
       <line
         key={date.getTime()}
@@ -129,6 +163,7 @@ export const GridBody: React.FC<GridBodyProps> = ({
   return (
     <g className="gridBody">
       <g className="rows">{gridRows}</g>
+      <g className="columns">{gridColumns}</g>
       <g className="rowLines">{rowLines}</g>
       <g className="ticks">{ticks}</g>
       <g className="today">{today}</g>

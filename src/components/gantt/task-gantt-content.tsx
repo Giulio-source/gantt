@@ -1,15 +1,16 @@
 import React, { useEffect, useState } from "react";
-import { EventOption } from "../../types/public-types";
-import { BarTask } from "../../types/bar-task";
-import { Arrow } from "../other/arrow";
+import { useTooltip } from "../../context/TooltipContext";
 import { handleTaskBySVGMouseEvent } from "../../helpers/bar-helper";
 import { isKeyboardEvent } from "../../helpers/other-helper";
-import { TaskItem } from "../task-item/task-item";
+import { BarTask } from "../../types/bar-task";
 import {
   BarMoveAction,
   GanttContentMoveAction,
   GanttEvent,
 } from "../../types/gantt-task-actions";
+import { EventOption } from "../../types/public-types";
+import { Arrow } from "../other/arrow";
+import { TaskItem } from "../task-item/task-item";
 
 export type TaskGanttContentProps = {
   tasks: BarTask[];
@@ -56,6 +57,7 @@ export const TaskGanttContent: React.FC<TaskGanttContentProps> = ({
   onClick,
   onDelete,
 }) => {
+  const { setTooltipVisible } = useTooltip();
   const point = svg?.current?.createSVGPoint();
   const [xStep, setXStep] = useState(0);
   const [initEventX1Delta, setInitEventX1Delta] = useState(0);
@@ -261,7 +263,11 @@ export const TaskGanttContent: React.FC<TaskGanttContentProps> = ({
   };
 
   return (
-    <g className="content">
+    <g
+      className="content"
+      onMouseEnter={() => setTooltipVisible(true)}
+      onMouseLeave={() => setTooltipVisible(false)}
+    >
       <g className="arrows" fill={arrowColor} stroke={arrowColor}>
         {tasks.map(task => {
           return task.barChildren.map(child => {

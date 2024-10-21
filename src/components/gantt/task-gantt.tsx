@@ -1,6 +1,9 @@
 import React, { useEffect, useMemo, useRef } from "react";
+import { useTooltip } from "../../context/TooltipContext";
+import { GanttProps } from "../../types/public-types";
 import { Calendar, CalendarProps } from "../calendar/calendar";
 import { Grid, GridProps } from "../grid/grid";
+import { GridTooltip } from "../grid/grid-tooltip";
 import styles from "./gantt.module.css";
 import { TaskGanttContent, TaskGanttContentProps } from "./task-gantt-content";
 
@@ -9,6 +12,7 @@ export type TaskGanttProps = {
   calendarProps: CalendarProps;
   barProps: TaskGanttContentProps;
   ganttHeight: number;
+  tooltipData: GanttProps["tooltipData"];
   scrollY: number;
   scrollX: number;
 };
@@ -17,9 +21,11 @@ export const TaskGantt: React.FC<TaskGanttProps> = ({
   calendarProps,
   barProps,
   ganttHeight,
+  tooltipData,
   scrollY,
   scrollX,
 }) => {
+  const { setTooltipVisible } = useTooltip();
   const ganttSVGRef = useRef<SVGSVGElement>(null);
   const horizontalContainerRef = useRef<HTMLDivElement>(null);
   const verticalGanttContainerRef = useRef<HTMLDivElement>(null);
@@ -61,6 +67,8 @@ export const TaskGantt: React.FC<TaskGanttProps> = ({
         <Calendar {...calendarProps} />
       </svg>
       <div
+        onMouseEnter={() => setTooltipVisible(true)}
+        onMouseLeave={() => setTooltipVisible(false)}
         ref={horizontalContainerRef}
         className={styles.horizontalContainer}
         style={
@@ -79,6 +87,7 @@ export const TaskGantt: React.FC<TaskGanttProps> = ({
           <Grid {...gridProps} />
           <TaskGanttContent {...newBarProps} />
         </svg>
+        <GridTooltip tooltipData={tooltipData} />
       </div>
     </div>
   );

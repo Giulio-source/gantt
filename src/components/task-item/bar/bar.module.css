@@ -3,6 +3,10 @@
   outline: none;
 }
 
+.barInvisible {
+  pointer-events: none;
+}
+
 .barWrapper:hover .barHandle {
   visibility: visible;
   opacity: 1;
