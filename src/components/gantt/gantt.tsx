@@ -26,6 +26,7 @@ import { TaskGanttContentProps } from "./task-gantt-content";
 
 export const Gantt: React.FunctionComponent<GanttProps> = ({
   tasks,
+  stickyHeader = false,
   headerHeight = 50,
   columnWidth = 60,
   listCellWidth = "155px",
@@ -454,6 +455,7 @@ export const Gantt: React.FunctionComponent<GanttProps> = ({
             scrollY={scrollY}
             scrollX={scrollX}
             tooltipData={tooltipData}
+            stickyHeader={stickyHeader}
           />
         </TooltipProvider>
         <VerticalScroll

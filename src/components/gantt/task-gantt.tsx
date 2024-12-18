@@ -15,6 +15,7 @@ export type TaskGanttProps = {
   tooltipData: GanttProps["tooltipData"];
   scrollY: number;
   scrollX: number;
+  stickyHeader: boolean;
 };
 export const TaskGantt: React.FC<TaskGanttProps> = ({
   gridProps,
@@ -24,6 +25,7 @@ export const TaskGantt: React.FC<TaskGanttProps> = ({
   tooltipData,
   scrollY,
   scrollX,
+  stickyHeader,
 }) => {
   const { setTooltipVisible } = useTooltip();
   const ganttSVGRef = useRef<SVGSVGElement>(null);
@@ -41,10 +43,51 @@ export const TaskGantt: React.FC<TaskGanttProps> = ({
   }, [barProps]);
 
   useEffect(() => {
+    const headerNode = document.getElementById("gantt-header-calendar");
+    let initialHeaderTopPosition = 0;
+    let initialWindowScrollY = window.scrollY;
+
+    if (stickyHeader && headerNode) {
+      if (initialHeaderTopPosition === 0) {
+        initialHeaderTopPosition = headerNode.getBoundingClientRect().top;
+      }
+
+      const handleScroll = () => {
+        const scrollTop = window.scrollY;
+
+        const headerOffset =
+          scrollTop - initialHeaderTopPosition - initialWindowScrollY;
+
+        if (headerOffset > 0) {
+          headerNode.style.transform = `translateY(${headerOffset}px)`;
+        } else {
+          headerNode.style.transform = "translateY(0px)";
+        }
+      };
+
+      const handleResize = () => {
+        initialHeaderTopPosition = headerNode.getBoundingClientRect().top;
+        initialWindowScrollY = window.scrollY;
+        headerNode.style.transform = "translateY(0px)";
+      };
+
+      window.addEventListener("scroll", handleScroll);
+      window.addEventListener("resize", handleResize);
+
+      return () => {
+        window.removeEventListener("scroll", handleScroll);
+        window.removeEventListener("resize", handleResize);
+      };
+    }
+
+    return;
+  }, [stickyHeader]);
+
+  useEffect(() => {
     if (horizontalContainerRef.current) {
       horizontalContainerRef.current.scrollTop = scrollY;
     }
-  }, [scrollY]);
+  }, [scrollY, stickyHeader]);
 
   useEffect(() => {
     if (verticalGanttContainerRef.current) {
@@ -58,14 +101,16 @@ export const TaskGantt: React.FC<TaskGanttProps> = ({
       ref={verticalGanttContainerRef}
       dir="ltr"
     >
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        width={gridProps.svgWidth}
-        height={calendarProps.headerHeight}
-        fontFamily={barProps.fontFamily}
-      >
-        <Calendar {...calendarProps} />
-      </svg>
+      <div id="gantt-header-calendar">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width={gridProps.svgWidth}
+          height={calendarProps.headerHeight}
+          fontFamily={barProps.fontFamily}
+        >
+          <Calendar {...calendarProps} />
+        </svg>
+      </div>
       <div
         onMouseEnter={() => setTooltipVisible(true)}
         onMouseLeave={() => setTooltipVisible(false)}
