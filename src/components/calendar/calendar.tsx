@@ -20,6 +20,7 @@ export type CalendarProps = {
   columnWidth: number;
   fontFamily: string;
   fontSize: string;
+  highlightsHoursColor?: Map<string, string>;
 };
 
 export const Calendar: React.FC<CalendarProps> = ({
@@ -31,6 +32,7 @@ export const Calendar: React.FC<CalendarProps> = ({
   columnWidth,
   fontFamily,
   fontSize,
+  highlightsHoursColor,
 }) => {
   const getCalendarValuesForYear = () => {
     const topValues: ReactNode[] = [];
@@ -270,6 +272,8 @@ export const Calendar: React.FC<CalendarProps> = ({
     const dates = dateSetup.dates;
     for (let i = 0; i < dates.length; i++) {
       const date = dates[i];
+      const hh = String(date.getHours()).padStart(2, "0");
+      const mm = String(date.getMinutes()).padStart(2, "0");
       const bottomValue = getCachedDateTimeFormat(locale, {
         hour: "numeric",
         minute: "numeric",
@@ -282,6 +286,12 @@ export const Calendar: React.FC<CalendarProps> = ({
           x={columnWidth * (i + +rtl)}
           className={styles.calendarBottomText}
           fontFamily={fontFamily}
+          style={{
+            ...({
+              "--highlight-color": highlightsHoursColor?.get(`${hh}:00`) ?? "",
+            } as React.CSSProperties),
+          }}
+          data-time={`${hh}:${mm}`}
         >
           {bottomValue}
         </text>
@@ -318,9 +328,9 @@ export const Calendar: React.FC<CalendarProps> = ({
       [topValues, bottomValues] = getCalendarValuesForYear();
       break;
     case ViewMode.Month:
-        [topValues, bottomValues] = getCalendarValuesForMonth();
-        break;
-      case ViewMode.Week:
+      [topValues, bottomValues] = getCalendarValuesForMonth();
+      break;
+    case ViewMode.Week:
       [topValues, bottomValues] = getCalendarValuesForWeek();
       break;
     case ViewMode.Day:

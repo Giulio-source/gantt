@@ -11,6 +11,7 @@ export type GridBodyProps = {
   rowHeight: number;
   columnWidth: number;
   todayColor: string;
+  highlightsHoursColor?: Map<string, string>;
   rtl: boolean;
   onColumnHighlight?: (time: number) => void;
 };
@@ -21,6 +22,7 @@ export const GridBody: React.FC<GridBodyProps> = ({
   svgWidth,
   columnWidth,
   todayColor,
+  highlightsHoursColor,
   rtl,
   onColumnHighlight,
 }) => {
@@ -79,6 +81,8 @@ export const GridBody: React.FC<GridBodyProps> = ({
   let today: ReactNode = <rect />;
   for (let i = 0; i < dates.length; i++) {
     const date = dates[i];
+    const hh = String(date.getHours()).padStart(2, "0");
+    const mm = String(date.getMinutes()).padStart(2, "0");
     const isFullHour = date.getMinutes() === 0;
 
     if (isFullHour) {
@@ -93,6 +97,7 @@ export const GridBody: React.FC<GridBodyProps> = ({
           onMouseEnter={() => onMouseEnterColumn(date.getHours())}
           onMouseMove={onMouseMoveColumn}
           onMouseLeave={() => setTooltipVisible(false)}
+          data-time={`${hh}:${mm}`}
         />
       );
     }
@@ -105,6 +110,13 @@ export const GridBody: React.FC<GridBodyProps> = ({
         x2={tickX}
         y2={y}
         className={styles.gridTick}
+        style={{
+          ...({
+            "--highlight-color": highlightsHoursColor?.get(`${hh}:00`) ?? "",
+          } as React.CSSProperties),
+          strokeDasharray: !!highlightsHoursColor?.get(`${hh}:00`) ? "7 4" : "",
+        }}
+        data-time={`${hh}:${mm}`}
       />
     );
     ticks.push(
@@ -115,6 +127,14 @@ export const GridBody: React.FC<GridBodyProps> = ({
         x2={tickX + columnWidth / 2}
         y2={y}
         className={styles.gridThinTick}
+        style={{
+          ...({
+            "--highlight-color":
+              highlightsHoursColor?.get(`${hh}:30`) ?? "",
+          } as React.CSSProperties),
+          strokeDasharray: !!highlightsHoursColor?.get(`${hh}:30`) ? "7 4" : "",
+        }}
+        data-time={`${hh}:30`}
       />
     );
     if (

@@ -16,13 +16,13 @@
 }
 
 .gridTick {
-  stroke: #e6e4e4;
+  stroke: var(--highlight-color, #e6e4e4);
   stroke-width: 2px;
   pointer-events: none;
 }
 
 .gridThinTick {
-  stroke: #e6e4e4;
+  stroke: var(--highlight-color, #e6e4e4);
   stroke-width: 1px;
   pointer-events: none;
 }
