@@ -122,6 +122,7 @@ export interface StylingOption {
   arrowColor?: string;
   arrowIndent?: number;
   todayColor?: string;
+  highlightsHoursColor?: Map<string, string>;
   TooltipContent?: React.FC<{
     task: Task;
     fontSize: string;
